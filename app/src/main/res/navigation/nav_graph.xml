@@ -11,11 +11,30 @@
         android:label="fragment_start"
         tools:layout="@layout/fragment_start" >
         <action
-            android:id="@+id/go_to_enter_fragment"
+            android:id="@+id/action_toEnter"
             app:destination="@id/enterFragment" />
     </fragment>
     <fragment
         android:id="@+id/enterFragment"
-        android:name="com.example.schedule.enterscreen.EnterFragment"
-        android:label="EnterFragment" />
+        android:name="com.example.schedule.auth.EnterFragment"
+        android:label="EnterFragment" >
+        <action
+            android:id="@+id/action_toLogUp"
+            app:destination="@id/logUpFragment" />
+        <action
+            android:id="@+id/action_toLogIn"
+            app:destination="@id/logInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/logUpFragment"
+        android:name="com.example.schedule.auth.LogUpFragment"
+        android:label="LogUpFragment" >
+        <action
+            android:id="@+id/action_logUp_to_logIn"
+            app:destination="@id/logInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/logInFragment"
+        android:name="com.example.schedule.auth.LogInFragment"
+        android:label="LogInFragment" />
 </navigation>

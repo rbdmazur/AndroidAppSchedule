@@ -1,4 +1,4 @@
-package com.example.schedule.startfragment
+package com.example.schedule.auth
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,26 +7,37 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.schedule.R
-import com.example.schedule.databinding.FragmentStartBinding
+import com.example.schedule.databinding.FragmentEnterBinding
 
+class EnterFragment : Fragment() {
 
-class StartFragment : Fragment() {
-    private var _binding: FragmentStartBinding? = null
-    private val binding: FragmentStartBinding
+    private var _binding: FragmentEnterBinding? = null
+    private val binding: FragmentEnterBinding
         get() = checkNotNull(_binding)
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentStartBinding.inflate(inflater, container, false)
+        _binding = FragmentEnterBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.startButton.setOnClickListener {
-            findNavController().navigate(R.id.action_toEnter)
+        binding.apply {
+            logUpButton.setOnClickListener {
+                findNavController().navigate(R.id.action_toLogUp)
+            }
+
+            logInButton.setOnClickListener {
+                findNavController().navigate(R.id.action_toLogIn)
+            }
         }
     }
 
@@ -34,5 +45,4 @@ class StartFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

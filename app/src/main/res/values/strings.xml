@@ -8,4 +8,15 @@
     <string name="or_enter_screen">or</string>
     <string name="log_in">Log In</string>
     <string name="log_up">Log Up</string>
+
+    <string name="reg_title">Registration</string>
+    <string name="name_holder">Name</string>
+    <string name="surname_holder">Surname</string>
+    <string name="email_holder">Email</string>
+    <string name="password_holder">Password</string>
+    <string name="reg_button">Register</string>
+    <string name="warning_message">Please, enter all fields.</string>
+    <string name="smth_went_wrong">Something went wong</string>
+
+    <string name="login_title">Login</string>
 </resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextH" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/coal</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ButtonStyle" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">20sp</item>
+    </style>
+</resources>
