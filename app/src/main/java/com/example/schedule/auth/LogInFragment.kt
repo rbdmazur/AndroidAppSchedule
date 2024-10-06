@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.example.schedule.R
 import com.example.schedule.databinding.FragmentLogInBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -46,7 +47,7 @@ class LogInFragment : Fragment() {
                     mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-
+//                                findNavController().navigate(R.id.action_logIn_Home)
                             } else {
                                 val message = Toast.makeText(context, getString(R.string.smth_went_wrong), Toast.LENGTH_LONG)
                                 message.show()

@@ -19,4 +19,30 @@
     <string name="smth_went_wrong">Something went wong</string>
 
     <string name="login_title">Login</string>
+
+    <string name="subjects_title">Subjects</string>
+    <string name="hello_text">Hi, </string>
+    <string name="math">Math</string>
+    <string name="schedule_title">Schedule</string>
+
+    <string name="monday">MON</string>
+    <string name="tuesday">TUE</string>
+    <string name="wednesday">WED</string>
+    <string name="thursday">THU</string>
+    <string name="friday">FRI</string>
+    <string name="saturday">SAT</string>
+    <string name="sunday">SUN</string>
+
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
 </resources>
