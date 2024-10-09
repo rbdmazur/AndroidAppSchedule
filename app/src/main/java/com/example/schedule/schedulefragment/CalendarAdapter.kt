@@ -1,6 +1,7 @@
 package com.example.schedule.schedulefragment
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ class CalendarHolder(
     fun bind(day: Date) {
         val cal = Calendar.getInstance()
         cal.time = day
+        Log.d("CALENDAR", cal.time.toString())
         binding.apply {
             dayNumber.text = cal.get(Calendar.DAY_OF_MONTH).toString()
             dayOfWeek.text = daysOfWeekParser(cal.get(Calendar.DAY_OF_WEEK))
@@ -39,12 +41,12 @@ class CalendarHolder(
     private fun daysOfWeekParser(day: Int): String {
         val res = context.resources
         return when(day) {
-            1 -> res.getString(R.string.monday)
-            2 -> res.getString(R.string.tuesday)
-            3 -> res.getString(R.string.wednesday)
-            4 -> res.getString(R.string.thursday)
-            5 -> res.getString(R.string.friday)
-            6 -> res.getString(R.string.saturday)
+            2 -> res.getString(R.string.monday)
+            3 -> res.getString(R.string.tuesday)
+            4 -> res.getString(R.string.wednesday)
+            5 -> res.getString(R.string.thursday)
+            6 -> res.getString(R.string.friday)
+            7 -> res.getString(R.string.saturday)
             else -> res.getString(R.string.sunday)
         }
     }

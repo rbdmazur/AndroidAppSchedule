@@ -1,7 +1,9 @@
 package com.example.schedule.model
 
+import java.util.UUID
+
 data class Schedule(
-    val id: Int,
+    val id: UUID,
     val dayOfWeek: Int,
-    val lessons: List<Lesson>
+    val lessons: ArrayList<Lesson> = ArrayList()
 )

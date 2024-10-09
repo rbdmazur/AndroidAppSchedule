@@ -2,6 +2,7 @@ package com.example.schedule.schedulefragment
 
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.schedule.R
 import com.example.schedule.databinding.FragmentScheduleBinding
-
+private const val TAG = "VIEWMODEL"
 class ScheduleFragment : Fragment() {
 
     private var _binding: FragmentScheduleBinding? = null
@@ -18,6 +19,7 @@ class ScheduleFragment : Fragment() {
     get() = checkNotNull(_binding)
 
     val viewModel: ScheduleViewModel by viewModels()
+    val cal = Calendar.getInstance()
 
 
     override fun onCreateView(
@@ -25,16 +27,25 @@ class ScheduleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentScheduleBinding.inflate(inflater, container, false)
-        binding.calendarRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.calendarRecyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.scheduleRecyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val cal = Calendar.getInstance()
         cal.time = viewModel.run { dates[selectedDayId] }
+        Log.d(TAG, cal.time.toString())
         binding.monthYearTextView.text = monthParser(cal.get(Calendar.MONTH))
         binding.calendarRecyclerView.adapter = CalendarAdapter(viewModel.dates, viewModel.selectedDayId)
+        if (viewModel.scheduleRepository.isEmpty()) {
+            binding.scheduleRecyclerView.adapter = ScheduleAddAdapter(showDialog)
+        } else {
+            binding.scheduleRecyclerView.adapter =
+                ScheduleLessonAdapter(viewModel.scheduleRepository.getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK)))
+        }
     }
 
     override fun onDestroyView() {
@@ -59,4 +70,14 @@ class ScheduleFragment : Fragment() {
         }
     }
 
+    private val showDialog: () -> Unit = {
+        val dialog = CreateScheduleDialog(updateScheduleRecycler)
+        dialog.show(childFragmentManager, "dialog")
+    }
+
+    private val updateScheduleRecycler: () -> Unit = {
+        Log.d(TAG, cal.time.toString())
+        binding.scheduleRecyclerView.adapter =
+            ScheduleLessonAdapter(viewModel.scheduleRepository.getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK)))
+    }
 }

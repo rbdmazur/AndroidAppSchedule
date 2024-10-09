@@ -45,4 +45,20 @@
     <string name="october">October</string>
     <string name="november">November</string>
     <string name="december">December</string>
+
+    <string name="lecture">Lecture</string>
+    <string name="practise">Practise</string>
+    <string name="auditorium">aud. %1$s</string>
+
+    <string name="create_sch">Create schedule</string>
+    <string name="create_sch_subject">Subject: </string>
+    <string name="create_sch_type">Type: </string>
+    <string name="create_sch_audit">Auditorium: </string>
+    <string name="create_sch_time">Time: </string>
+    <string name="lesson_counter">Lessons: %d</string>
+
+    <string name="add_lesson">Add lesson</string>
+    <string name="add_free">Add free lesson</string>
+    <string name="next_day">Next day</string>
+    <string name="create_sch_btn">Create Schedule</string>
 </resources>
