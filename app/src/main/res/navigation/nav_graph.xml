@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_toEnter"
             app:destination="@id/enterFragment" />
+        <action
+            android:id="@+id/action_start_to_schedule"
+            app:destination="@id/scheduleFragment" />
     </fragment>
     <fragment
         android:id="@+id/enterFragment"
@@ -37,4 +40,42 @@
         android:id="@+id/logInFragment"
         android:name="com.example.schedule.auth.LogInFragment"
         android:label="LogInFragment" />
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="com.example.schedule.schedulefragment.ScheduleFragment"
+        android:label="ScheduleFragment" >
+        <action
+            android:id="@+id/action_schedule_to_init"
+            app:destination="@id/initScheduleDialog" />
+        <argument
+            android:name="scheduleId"
+            app:argType="java.util.UUID"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_scheduleToAddSubjects"
+            app:destination="@id/addSubjectsDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/initScheduleDialog"
+        android:name="com.example.schedule.schedulefragment.InitScheduleDialog"
+        android:label="InitScheduleDialog" >
+        <action
+            android:id="@+id/action_init_to_create"
+            app:destination="@id/createScheduleDialog" />
+    </dialog>
+    <fragment
+        android:id="@+id/createScheduleDialog"
+        android:name="com.example.schedule.schedulefragment.CreateScheduleDialog"
+        android:label="CreateScheduleDialog" >
+        <action
+            android:id="@+id/action_create_to_schedule"
+            app:destination="@id/scheduleFragment" />
+        <argument
+            android:name="scheduleId"
+            app:argType="java.util.UUID" />
+    </fragment>
+    <dialog
+        android:id="@+id/addSubjectsDialog"
+        android:name="com.example.schedule.schedulefragment.AddSubjectsDialog"
+        android:label="AddSubjectsDialog" />
 </navigation>

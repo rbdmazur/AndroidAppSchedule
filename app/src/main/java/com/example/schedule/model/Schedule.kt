@@ -1,9 +1,11 @@
 package com.example.schedule.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.UUID
 
+@Entity(tableName = "schedule")
 data class Schedule(
-    val id: UUID,
-    val dayOfWeek: Int,
-    val lessons: ArrayList<Lesson> = ArrayList()
+    @PrimaryKey val id: UUID,
+    val title: String,
 )

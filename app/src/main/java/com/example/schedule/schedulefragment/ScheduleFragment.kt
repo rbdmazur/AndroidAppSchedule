@@ -8,9 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.schedule.R
 import com.example.schedule.databinding.FragmentScheduleBinding
+import com.example.schedule.model.ScheduleForDay
+import kotlinx.coroutines.launch
+import java.util.Date
+
 private const val TAG = "VIEWMODEL"
 class ScheduleFragment : Fragment() {
 
@@ -18,7 +27,11 @@ class ScheduleFragment : Fragment() {
     val binding: FragmentScheduleBinding
     get() = checkNotNull(_binding)
 
-    val viewModel: ScheduleViewModel by viewModels()
+    private val args: ScheduleFragmentArgs by navArgs()
+
+    private val viewModel: ScheduleViewModel by viewModels {
+        ScheduleViewModelFactory(args.scheduleId)
+    }
     val cal = Calendar.getInstance()
 
 
@@ -39,12 +52,26 @@ class ScheduleFragment : Fragment() {
         cal.time = viewModel.run { dates[selectedDayId] }
         Log.d(TAG, cal.time.toString())
         binding.monthYearTextView.text = monthParser(cal.get(Calendar.MONTH))
-        binding.calendarRecyclerView.adapter = CalendarAdapter(viewModel.dates, viewModel.selectedDayId)
-        if (viewModel.scheduleRepository.isEmpty()) {
-            binding.scheduleRecyclerView.adapter = ScheduleAddAdapter(showDialog)
-        } else {
-            binding.scheduleRecyclerView.adapter =
-                ScheduleLessonAdapter(viewModel.scheduleRepository.getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK)))
+        binding.calendarRecyclerView.adapter = CalendarAdapter(viewModel.dates, updateUiAfterChangeDate)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                if (args.scheduleId == null) {
+                    Log.d("SCH_ID", "randomFirst: ${args.scheduleId}")
+                    binding.scheduleRecyclerView.adapter = ScheduleAddAdapter(showDialog)
+                } else {
+//                    viewModel.actualScheduleId =
+//                        viewModel.scheduleRepository.getSchedules().get(0).id
+//                    viewModel.actualScheduleForWeek =
+//                        viewModel.scheduleRepository.getScheduleForWeek(viewModel.actualScheduleId)
+                    Log.d(TAG, "scheduleRep in not empty")
+//                    binding.scheduleRecyclerView.adapter =
+//                        ScheduleLessonAdapter(getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK), viewModel.actualScheduleForWeek))
+                }
+
+                if (viewModel.scheduleRepository.getSubjects().isEmpty()) {
+                    findNavController().navigate(ScheduleFragmentDirections.actionScheduleToAddSubjects())
+                }
+            }
         }
     }
 
@@ -70,14 +97,28 @@ class ScheduleFragment : Fragment() {
         }
     }
 
+    private fun getScheduleForDay(dayOfWeek: Int, list: List<ScheduleForDay>): ScheduleForDay {
+        return list.stream().filter { p ->
+            p.dayOfWeek == dayOfWeek
+        }.findFirst().get()
+    }
+
     private val showDialog: () -> Unit = {
-        val dialog = CreateScheduleDialog(updateScheduleRecycler)
-        dialog.show(childFragmentManager, "dialog")
+        findNavController().navigate(ScheduleFragmentDirections.actionScheduleToInit())
     }
 
     private val updateScheduleRecycler: () -> Unit = {
-        Log.d(TAG, cal.time.toString())
-        binding.scheduleRecyclerView.adapter =
-            ScheduleLessonAdapter(viewModel.scheduleRepository.getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK)))
+//        binding.scheduleRecyclerView.adapter =
+//            ScheduleLessonAdapter(getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK), viewModel.actualScheduleForWeek))
+    }
+
+    private val updateUiAfterChangeDate: (day: Date, dayId: Int) -> Unit = { day, dayId ->
+        cal.time = day
+        viewModel.selectedDayId = dayId
+        CalendarHolderContainer.selectedDayId = dayId
+//        if (viewModel.actualScheduleForWeek.isNotEmpty()) {
+////            binding.scheduleRecyclerView.adapter =
+////                ScheduleLessonAdapter(getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK), viewModel.actualScheduleForWeek))
+//        }
     }
 }

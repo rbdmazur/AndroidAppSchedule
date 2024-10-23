@@ -56,9 +56,17 @@
     <string name="create_sch_audit">Auditorium: </string>
     <string name="create_sch_time">Time: </string>
     <string name="lesson_counter">Lessons: %d</string>
+    <string name="hint">Schedule title</string>
 
     <string name="add_lesson">Add lesson</string>
     <string name="add_free">Add free lesson</string>
     <string name="next_day">Next day</string>
     <string name="create_sch_btn">Create Schedule</string>
+    <string name="toast_warning">Please, enter schedule title</string>
+
+    <string name="add_subjects">Add Subjects</string>
+    <string name="add_subject_button">Add</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="subjects_counter">Subjects: %d</string>
+    <string name="subjects_warning_blank">Please, enter subject name.</string>
 </resources>

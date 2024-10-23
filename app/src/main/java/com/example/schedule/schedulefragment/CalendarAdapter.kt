@@ -10,16 +10,23 @@ import com.example.schedule.databinding.CalendarDayBinding
 import java.util.Calendar
 import java.util.Date
 
+class CalendarHolderContainer {
+    companion object {
+        var selectedHolder: CalendarHolder? = null
+        var selectedDayId: Int = 0
+    }
+}
+
 class CalendarHolder(
     private val binding: CalendarDayBinding,
     private val context: Context,
-    private val isSelected: Boolean
+    private val isSelected: Boolean,
+    private val updateUI: (Date, Int) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(day: Date) {
+    fun bind(day: Date, position: Int) {
         val cal = Calendar.getInstance()
         cal.time = day
-        Log.d("CALENDAR", cal.time.toString())
         binding.apply {
             dayNumber.text = cal.get(Calendar.DAY_OF_MONTH).toString()
             dayOfWeek.text = daysOfWeekParser(cal.get(Calendar.DAY_OF_WEEK))
@@ -27,6 +34,24 @@ class CalendarHolder(
 
         if (isSelected) {
             makeSelected()
+        }
+
+        binding.dayCardView.setOnClickListener {
+            CalendarHolderContainer.selectedHolder?.let {
+                makeUnselected()
+            }
+            updateUI(day, position)
+            this.makeSelected()
+        }
+    }
+
+    private fun makeUnselected() {
+        val res = context.resources
+        CalendarHolderContainer.selectedHolder?.let {
+            it.binding.apply {
+                dayCardView.setCardBackgroundColor(res.getColor(R.color.white))
+                dayNumber.setTextColor(res.getColor(R.color.coal))
+            }
         }
     }
 
@@ -36,6 +61,8 @@ class CalendarHolder(
             dayCardView.setCardBackgroundColor(res.getColor(R.color.coal))
             dayNumber.setTextColor(res.getColor(R.color.white))
         }
+
+        CalendarHolderContainer.selectedHolder = this
     }
 
     private fun daysOfWeekParser(day: Int): String {
@@ -53,25 +80,25 @@ class CalendarHolder(
 }
 class CalendarAdapter(
     private val dates: List<Date>,
-    private val selectedDayId: Int
+    private val updateUI: (Date, Int) -> Unit
 ) : RecyclerView.Adapter<CalendarHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = CalendarDayBinding.inflate(inflater, parent, false)
         val isSelected = viewType == 1
-        return CalendarHolder(binding, parent.context, isSelected)
+        return CalendarHolder(binding, parent.context, isSelected, updateUI)
     }
 
     override fun getItemCount(): Int = dates.size
 
     override fun onBindViewHolder(holder: CalendarHolder, position: Int) {
         val date = dates[position]
-        holder.bind(date)
+        holder.bind(date, position)
     }
 
     // 1 - selected, 0 - not selected
     override fun getItemViewType(position: Int): Int {
-        return if (position == selectedDayId) {
+        return if (position == CalendarHolderContainer.selectedDayId) {
             1
         } else {
             0

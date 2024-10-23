@@ -7,7 +7,7 @@ import com.example.schedule.repositories.SubjectsRepository
 class ScheduleApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        SubjectsRepository.init(this)
-        ScheduleRepository.init(this)
+        ScheduleRepository.init(this.applicationContext)
+        SubjectsRepository.init(this.applicationContext)
     }
 }

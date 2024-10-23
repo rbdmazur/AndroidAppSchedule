@@ -1,5 +1,6 @@
 package com.example.schedule.schedulefragment
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,64 +8,61 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.schedule.R
+import com.example.schedule.Utils
 import com.example.schedule.databinding.CreateScheduleDialogBinding
 import com.example.schedule.model.Lesson
-import com.example.schedule.model.Schedule
+import com.example.schedule.model.ScheduleForDay
+import com.example.schedule.model.Subject
+import com.example.schedule.repositories.SUBJECT_TAG
 import com.example.schedule.repositories.ScheduleRepository
 import com.example.schedule.repositories.SubjectsRepository
 import com.google.android.material.card.MaterialCardView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
 
 private const val TAG = "DIALOG"
 
-class CreateScheduleDialog(
-    private val updateScheduleRecycler: () -> Unit
-) : DialogFragment() {
+class CreateScheduleDialog : Fragment() {
 
-    private val times = listOf(
-        "8:15-9:35",
-        "9:45-11:05",
-        "11:15-12:35",
-        "13:00-14:20",
-        "14:30-15:50",
-        "16:00-17:20",
-        "17:40-19:00",
-        "19:10-20:30",
-        "20:40-22:00"
-    )
-    private lateinit var currentTimes: List<String>
-    private val subjectsRepository = SubjectsRepository.get()
-    private val subjectNames = initSubjects()
-    private lateinit var types: List<String>
+    private val args: CreateScheduleDialogArgs by navArgs()
 
-    private var lastTime = 0
-    private var lessonsCounter = 0
-    //day in daysView arrays
-    private var currentDay = 0
-
-    private var currentDayOfWeek = 2
-
-    private lateinit var days: List<MaterialCardView>
-    private lateinit var daysText: List<TextView>
-
-    private var schedule: Schedule? = null
-
-    private val scheduleRepository = ScheduleRepository.get()
+    private val createViewModel: CreateScheduleViewModel by viewModels {
+        CreateScheduleViewModelFactory(args.scheduleId)
+    }
 
     private var _binding: CreateScheduleDialogBinding? = null
     private val binding: CreateScheduleDialogBinding
         get() = checkNotNull(_binding)
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("SCH_ID", "createDialog: ${createViewModel.scheduleId}")
         _binding = CreateScheduleDialogBinding.inflate(inflater, container, false)
         binding.apply {
-            days = listOf(
+            createViewModel.days = listOf(
                 cardViewMon,
                 cardViewTue,
                 cardViewWed,
@@ -73,7 +71,7 @@ class CreateScheduleDialog(
                 cardViewSat
             )
 
-            daysText = listOf(
+            createViewModel.daysText = listOf(
                 dayCardMon,
                 dayCardTue,
                 dayCardWed,
@@ -82,40 +80,47 @@ class CreateScheduleDialog(
                 dayCardSat
             )
         }
-        types = listOf(resources.getString(R.string.lecture), resources.getString(R.string.practise))
-        Log.d(TAG, "OnCreateView works")
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
-        val timeAdapter = getSpinnerAdapter(times)
-        val subjectAdapter = getSpinnerAdapter(subjectNames)
-        val typesAdapter = getSpinnerAdapter(types)
+
+        createViewModel.types = listOf(resources.getString(R.string.lecture), resources.getString(R.string.practise))
+
         val res = resources
         binding.apply {
-            lessonCounterText.text = res.getString(R.string.lesson_counter, lessonsCounter)
-            timeSpinner.adapter = timeAdapter
-            subjectsSpinner.adapter = subjectAdapter
-            typeSpinner.adapter = typesAdapter
-
-            nextDayButton.isEnabled = schedule != null
-
-            addLessonButton.setOnClickListener {
-                addLesson()
+            lessonCounterText.text = res.getString(R.string.lesson_counter, createViewModel.lessonsCounter)
+            timeSpinner.adapter = getSpinnerAdapter(createViewModel.times)
+            viewLifecycleOwner.lifecycleScope.launch {
+                subjectsSpinner.adapter = getSpinnerAdapterFromSubjects(createViewModel.scheduleRepository.getSubjects())
             }
+            typeSpinner.adapter = getSpinnerAdapter(createViewModel.types)
 
-            addFreeButton.setOnClickListener {
-                addFree()
-            }
+            nextDayButton.isEnabled = createViewModel.scheduleForDay != null
 
-            nextDayButton.setOnClickListener {
-                nextDay()
+            binding.apply {
+                addLessonButton.setOnClickListener {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        addLesson()
+                    }
+                }
+
+                addFreeButton.setOnClickListener {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        addFree()
+                    }
+                }
+
+                nextDayButton.setOnClickListener {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        nextDay()
+                    }
+                }
             }
         }
 
-        makeSelected(currentDay)
+        makeSelected(createViewModel.currentDay)
         Log.d(TAG, "onViewCreated works")
     }
 
@@ -124,31 +129,25 @@ class CreateScheduleDialog(
         _binding = null
     }
 
-    private fun initSubjects(): List<String> {
-        val result = ArrayList<String>()
-        val rep = subjectsRepository.getSubjects()
-        rep.forEach {
-            result.add(it.name)
-        }
-        return result
-    }
-
     private fun makeSelected(day: Int) {
-        val dayCard = days[day]
+        val dayCard = createViewModel.days[day]
         dayCard.setCardBackgroundColor(resources.getColor(R.color.coal))
-        val dayText = daysText[day]
+        val dayText = createViewModel.daysText[day]
         dayText.setTextColor(resources.getColor(R.color.white))
     }
 
     private fun addLesson() {
-        if (schedule == null) {
-            schedule = Schedule(UUID.randomUUID(), currentDayOfWeek)
+        if (createViewModel.scheduleForDay == null) {
+            createViewModel.scheduleForDay = ScheduleForDay(
+                UUID.randomUUID(),
+                createViewModel.currentDayOfWeek,
+                createViewModel.scheduleId)
         }
 
-        val subjectId = binding.subjectsSpinner.selectedItemId.toInt()
+        val subject = binding.subjectsSpinner.selectedItem as Subject
         val type = binding.typeSpinner.selectedItemId.toInt()
         val time = binding.timeSpinner.selectedItem.toString()
-        lastTime = binding.timeSpinner.selectedItemId.toInt()
+        createViewModel.lastTime = binding.timeSpinner.selectedItemId.toInt()
         val aud = binding.auditoriumTextField.text.toString()
 
         val lesson = Lesson(
@@ -156,79 +155,99 @@ class CreateScheduleDialog(
             aud,
             time,
             type,
-            subjectsRepository.getSubject(subjectId)
+            subject.id,
+            createViewModel.scheduleForDay!!.id
         )
 
-        schedule!!.lessons.add(lesson)
+        createViewModel.lessons.add(lesson)
 
-        lessonsCounter++
-        lastTime++
+        createViewModel.lessonsCounter++
+        createViewModel.lastTime++
 
         updateUIAfterAddLesson()
     }
 
-    private fun addFree() {
-        schedule = Schedule(UUID.randomUUID(), currentDayOfWeek)
-        if (currentDay < 5) {
+    private suspend fun addFree() {
+        createViewModel.scheduleForDay = ScheduleForDay(
+            UUID.randomUUID(),
+            createViewModel.currentDayOfWeek,
+            createViewModel.scheduleId)
+        createViewModel.lessons = ArrayList()
+        if (createViewModel.currentDay < 5) {
             nextDay()
         } else {
             endDialog()
         }
     }
 
-    private fun nextDay() {
-        schedule?.let { scheduleRepository.addSchedule(it) }
+    private suspend fun nextDay() {
+        createViewModel.scheduleForDay?.let { createViewModel.scheduleRepository.addScheduleForDay(it) }
+        if (createViewModel.lessons.isNotEmpty()) {
+            createViewModel.lessons.forEach {
+                createViewModel.scheduleRepository.addLesson(it)
+            }
+        }
 
-        currentDay++
-        currentDayOfWeek++
-        lessonsCounter = 0
-        schedule = null
+        createViewModel.currentDay++
+        createViewModel.currentDayOfWeek++
+        createViewModel.lessonsCounter = 0
+        createViewModel.scheduleForDay = null
+        createViewModel.lessons = ArrayList()
         updateUIForNextDay()
     }
 
     private fun updateUIAfterAddLesson() {
-        currentTimes = times.subList(lastTime, times.lastIndex)
-        val timeAdapter = getSpinnerAdapter(currentTimes)
+        createViewModel.currentTimes = Utils.subList(createViewModel.currentTimes, createViewModel.lastTime)
+        val timeAdapter = getSpinnerAdapter(createViewModel.currentTimes)
+        createViewModel.lastTime = 0
 
         binding.apply {
-            lessonCounterText.text = resources.getString(R.string.lesson_counter, lessonsCounter)
+            lessonCounterText.text = resources.getString(R.string.lesson_counter, createViewModel.lessonsCounter)
             auditoriumTextField.text.clear()
             subjectsSpinner.setSelection(0)
             timeSpinner.adapter = timeAdapter
             typeSpinner.setSelection(0)
 
-            nextDayButton.isEnabled = schedule != null
+            nextDayButton.isEnabled = createViewModel.scheduleForDay != null
         }
     }
 
     private fun updateUIForNextDay() {
-        makeSelected(currentDay)
-        val timeAdapter = getSpinnerAdapter(times)
+        makeSelected(createViewModel.currentDay)
+        val timeAdapter = getSpinnerAdapter(createViewModel.times)
+        createViewModel.lastTime = 0
+        createViewModel.currentTimes = createViewModel.times
         binding.apply {
-            lessonCounterText.text = resources.getString(R.string.lesson_counter, lessonsCounter)
+            lessonCounterText.text = resources.getString(R.string.lesson_counter, createViewModel.lessonsCounter)
             auditoriumTextField.text.clear()
             subjectsSpinner.setSelection(0)
             timeSpinner.adapter = timeAdapter
             typeSpinner.setSelection(0)
 
-            nextDayButton.isEnabled = schedule != null
+            nextDayButton.isEnabled = createViewModel.scheduleForDay != null
         }
 
-        if (currentDay == 5) {
+        if (createViewModel.currentDay == 5) {
             binding.nextDayButton.text = resources.getString(R.string.create_sch_btn)
             binding.nextDayButton.setOnClickListener {
-                endDialog()
+                lifecycleScope.launch {
+                    endDialog()
+                }
             }
         }
     }
 
-    private fun endDialog() {
-        schedule?.let { scheduleRepository.addSchedule(it) }
-        updateScheduleRecycler()
-        this.dismiss()
+    private suspend fun endDialog() {
+        createViewModel.scheduleForDay?.let { createViewModel.scheduleRepository.addScheduleForDay(it) }
+        createViewModel.scheduleRepository.addScheduleForDay(ScheduleForDay(UUID.randomUUID(), 1, createViewModel.scheduleId))
+        findNavController().navigate(CreateScheduleDialogDirections.actionCreateToSchedule(createViewModel.scheduleId))
     }
 
     private fun getSpinnerAdapter(data: List<String>): ArrayAdapter<String>? {
+        return this.context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_dropdown_item, data) }
+    }
+
+    private fun getSpinnerAdapterFromSubjects(data: List<Subject>): ArrayAdapter<Subject>? {
         return this.context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_dropdown_item, data) }
     }
 }

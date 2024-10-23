@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.schedule.R
 import com.example.schedule.databinding.LessonScheduleCardBinding
 import com.example.schedule.model.Lesson
-import com.example.schedule.model.Schedule
+import com.example.schedule.model.ScheduleForDay
+import com.example.schedule.model.Subject
 
 class ScheduleLessonHolder(
     private val binding: LessonScheduleCardBinding,
@@ -17,9 +18,13 @@ class ScheduleLessonHolder(
     fun bind(lesson: Lesson) {
         val res = context.resources
         binding.apply {
-            subjectTextView.text = lesson.subject.name
+//            subjectTextView.text = lesson.subject.name
             typeTextView.text = typeParser(lesson.type)
             auditoriumTextView.text = res.getString(R.string.auditorium, lesson.auditorium)
+
+            val times = timeParser(lesson.time)
+            timeTextView1.text = times[0]
+            timeTextView2.text = times[1]
         }
     }
 
@@ -32,10 +37,14 @@ class ScheduleLessonHolder(
             res.getString(R.string.practise)
         }
     }
+
+    private fun timeParser(timeStr: String): List<String> {
+        return timeStr.split('-')
+    }
 }
 
 class ScheduleLessonAdapter(
-    private val schedule: Schedule
+    private val lessons: Map<Lesson, Subject>
 ) : RecyclerView.Adapter<ScheduleLessonHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleLessonHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -43,10 +52,10 @@ class ScheduleLessonAdapter(
         return ScheduleLessonHolder(binding, parent.context)
     }
 
-    override fun getItemCount(): Int = schedule.lessons.size
+    override fun getItemCount(): Int = lessons.size
 
     override fun onBindViewHolder(holder: ScheduleLessonHolder, position: Int) {
-        val lesson = schedule.lessons[position]
-        holder.bind(lesson)
+//        val lesson = lessons[position]
+//        holder.bind(lesson)
     }
 }
