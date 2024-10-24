@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.schedule.model.ScheduleForDay
 import com.example.schedule.repositories.ScheduleRepository
+import com.example.schedule.repositories.SubjectsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
@@ -20,7 +21,8 @@ class ScheduleViewModel(scheduleId: UUID?) : ViewModel() {
     //This is a day in the dates array
     var selectedDayId = 0
     val dates: List<Date> = initDates()
-    var scheduleRepository = ScheduleRepository.get()
+    val scheduleRepository = ScheduleRepository.get()
+    val subjectsRepository = SubjectsRepository.get()
 
     private fun initDates(): List<Date> {
         val list = ArrayList<Date>()

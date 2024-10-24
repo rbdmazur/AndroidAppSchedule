@@ -51,7 +51,7 @@ class ScheduleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         cal.time = viewModel.run { dates[selectedDayId] }
         binding.monthYearTextView.text = monthParser(cal.get(Calendar.MONTH))
-        binding.calendarRecyclerView.adapter = CalendarAdapter(viewModel.dates, updateUiAfterChangeDate)
+        binding.calendarRecyclerView.adapter = CalendarAdapter(viewModel.dates, viewModel.selectedDayId, updateUiAfterChangeDate)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 if (args.scheduleId == null) {
@@ -69,7 +69,8 @@ class ScheduleFragment : Fragment() {
                 }
 
                 if (viewModel.scheduleRepository.getSubjects().isEmpty()) {
-                    findNavController().navigate(ScheduleFragmentDirections.actionScheduleToAddSubjects())
+                    viewModel.subjectsRepository.addSubjectsToDataBase(viewModel.scheduleRepository)
+//                    findNavController().navigate(ScheduleFragmentDirections.actionScheduleToAddSubjects())
                 }
             }
         }
@@ -107,18 +108,21 @@ class ScheduleFragment : Fragment() {
         findNavController().navigate(ScheduleFragmentDirections.actionScheduleToInit())
     }
 
-    private val updateScheduleRecycler: () -> Unit = {
-//        binding.scheduleRecyclerView.adapter =
-//            ScheduleLessonAdapter(getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK), viewModel.actualScheduleForWeek))
-    }
 
     private val updateUiAfterChangeDate: (day: Date, dayId: Int) -> Unit = { day, dayId ->
         cal.time = day
         viewModel.selectedDayId = dayId
-        CalendarHolderContainer.selectedDayId = dayId
-//        if (viewModel.actualScheduleForWeek.isNotEmpty()) {
-////            binding.scheduleRecyclerView.adapter =
-////                ScheduleLessonAdapter(getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK), viewModel.actualScheduleForWeek))
-//        }
+
+        if (args.scheduleId != null) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                val scheduleForDay = viewModel.scheduleRepository.getScheduleForDayOfWeek(
+                    args.scheduleId!!,
+                    cal.get(Calendar.DAY_OF_WEEK)
+                )
+                binding.scheduleRecyclerView.adapter = ScheduleLessonAdapter(
+                    viewModel.scheduleRepository.getLessonsWithSubjects(scheduleForDay.id)
+                )
+            }
+        }
     }
 }
