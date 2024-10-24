@@ -136,7 +136,7 @@ class CreateScheduleDialog : Fragment() {
         dayText.setTextColor(resources.getColor(R.color.white))
     }
 
-    private fun addLesson() {
+    private suspend fun addLesson() {
         if (createViewModel.scheduleForDay == null) {
             createViewModel.scheduleForDay = ScheduleForDay(
                 UUID.randomUUID(),
@@ -163,6 +163,10 @@ class CreateScheduleDialog : Fragment() {
 
         createViewModel.lessonsCounter++
         createViewModel.lastTime++
+
+        if (createViewModel.currentTimes.size == 1) {
+            nextDay()
+        }
 
         updateUIAfterAddLesson()
     }
