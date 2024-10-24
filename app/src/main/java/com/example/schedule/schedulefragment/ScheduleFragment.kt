@@ -50,7 +50,6 @@ class ScheduleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         cal.time = viewModel.run { dates[selectedDayId] }
-        Log.d(TAG, cal.time.toString())
         binding.monthYearTextView.text = monthParser(cal.get(Calendar.MONTH))
         binding.calendarRecyclerView.adapter = CalendarAdapter(viewModel.dates, updateUiAfterChangeDate)
         viewLifecycleOwner.lifecycleScope.launch {
@@ -59,13 +58,14 @@ class ScheduleFragment : Fragment() {
                     Log.d("SCH_ID", "randomFirst: ${args.scheduleId}")
                     binding.scheduleRecyclerView.adapter = ScheduleAddAdapter(showDialog)
                 } else {
-//                    viewModel.actualScheduleId =
-//                        viewModel.scheduleRepository.getSchedules().get(0).id
-//                    viewModel.actualScheduleForWeek =
-//                        viewModel.scheduleRepository.getScheduleForWeek(viewModel.actualScheduleId)
-                    Log.d(TAG, "scheduleRep in not empty")
-//                    binding.scheduleRecyclerView.adapter =
-//                        ScheduleLessonAdapter(getScheduleForDay(cal.get(Calendar.DAY_OF_WEEK), viewModel.actualScheduleForWeek))
+                    val scheduleForDay = viewModel.scheduleRepository.getScheduleForDayOfWeek(
+                        args.scheduleId!!,
+                        cal.get(Calendar.DAY_OF_WEEK)
+                    )
+                    binding.scheduleRecyclerView.adapter = ScheduleLessonAdapter(
+                        viewModel.scheduleRepository.getLessonsWithSubjects(scheduleForDay.id)
+                    )
+
                 }
 
                 if (viewModel.scheduleRepository.getSubjects().isEmpty()) {

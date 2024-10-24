@@ -21,15 +21,7 @@ class ScheduleViewModel(scheduleId: UUID?) : ViewModel() {
     var selectedDayId = 0
     val dates: List<Date> = initDates()
     var scheduleRepository = ScheduleRepository.get()
-    var actualScheduleForWeek: List<ScheduleForDay> = emptyList()
 
-    init {
-        if (scheduleId != null) {
-            viewModelScope.launch {
-                actualScheduleForWeek = scheduleRepository.getScheduleForWeek(scheduleId)
-            }
-        }
-    }
     private fun initDates(): List<Date> {
         val list = ArrayList<Date>()
         val calendar = Calendar.getInstance()
@@ -40,6 +32,7 @@ class ScheduleViewModel(scheduleId: UUID?) : ViewModel() {
         }
         return list
     }
+
 }
 
 class ScheduleViewModelFactory(

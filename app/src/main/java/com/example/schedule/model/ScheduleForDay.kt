@@ -20,6 +20,6 @@ import java.util.UUID
     ])
 data class ScheduleForDay(
     @PrimaryKey val id: UUID,
-    val dayOfWeek: Int,
+    @ColumnInfo(name = "day_of_week") val dayOfWeek: Int,
     @ColumnInfo(name = "schedule_id") val scheduleId: UUID
 )

@@ -4,10 +4,10 @@ import androidx.room.Embedded
 import androidx.room.Relation
 
 data class LessonAndSubject(
-    @Embedded val subject: Subject,
+    @Embedded val lesson: Lesson,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "subject_id"
+        parentColumn = "subject_id",
+        entityColumn = "id"
     )
-    val lesson: Lesson
+    val subject: Subject,
 )

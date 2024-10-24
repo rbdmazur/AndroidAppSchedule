@@ -61,6 +61,10 @@ class ScheduleRepository private constructor(context: Context) {
         database.getScheduleDao().addSchedule(schedule)
     }
 
+    suspend fun getScheduleForDayOfWeek(scheduleId: UUID, dayOfWeek: Int): ScheduleForDay = withContext(Dispatchers.IO) {
+        database.getScheduleDao().getScheduleForDayOfWeek(scheduleId, dayOfWeek)
+    }
+
     companion object {
         private var INSTANCE: ScheduleRepository? = null
 

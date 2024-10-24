@@ -17,6 +17,9 @@ interface ScheduleDao {
     @Query("SELECT * FROM schedule")
     suspend fun getSchedules(): List<Schedule>
 
+    @Query("SELECT * FROM schedules_for_day WHERE schedule_id=(:scheduleId) AND day_of_week=(:dayOfWeek)")
+    suspend fun getScheduleForDayOfWeek(scheduleId: UUID, dayOfWeek: Int): ScheduleForDay
+
     @Insert
     suspend fun addSchedule(schedule: Schedule)
 }

@@ -33,12 +33,12 @@ class StartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.startButton.setOnClickListener {
 //            findNavController().navigate(R.id.action_toEnter)
-//            viewLifecycleOwner.lifecycleScope.launch {
-//                val schedules = scheduleRepository.getSchedules()
-//                val schedule = if (schedules.isEmpty()) null else schedules[0]
-//                findNavController().navigate(StartFragmentDirections.actionStartToSchedule(schedule?.id))
-//            }
-            findNavController().navigate(StartFragmentDirections.actionStartToSchedule(null))
+            viewLifecycleOwner.lifecycleScope.launch {
+                val schedules = scheduleRepository.getSchedules()
+                val schedule = if (schedules.isEmpty()) null else schedules[0]
+                findNavController().navigate(StartFragmentDirections.actionStartToSchedule(schedule?.id))
+            }
+//            findNavController().navigate(StartFragmentDirections.actionStartToSchedule(null))
 
         }
     }
