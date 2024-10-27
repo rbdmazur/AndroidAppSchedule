@@ -1,4 +1,4 @@
-package com.example.schedule.schedulefragment
+package com.example.schedule.schedulefragment.createschedule
 
 import android.os.Bundle
 import android.view.LayoutInflater

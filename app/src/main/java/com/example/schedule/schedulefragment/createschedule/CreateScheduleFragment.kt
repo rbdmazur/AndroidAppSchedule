@@ -1,20 +1,13 @@
-package com.example.schedule.schedulefragment
+package com.example.schedule.schedulefragment.createschedule
 
-import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.TextView
-import androidx.core.view.isVisible
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.schedule.R
@@ -23,25 +16,12 @@ import com.example.schedule.databinding.CreateScheduleDialogBinding
 import com.example.schedule.model.Lesson
 import com.example.schedule.model.ScheduleForDay
 import com.example.schedule.model.Subject
-import com.example.schedule.repositories.SUBJECT_TAG
-import com.example.schedule.repositories.ScheduleRepository
-import com.example.schedule.repositories.SubjectsRepository
-import com.google.android.material.card.MaterialCardView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.UUID
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
 
-private const val TAG = "DIALOG"
+class CreateScheduleFragment : Fragment() {
 
-class CreateScheduleDialog : Fragment() {
-
-    private val args: CreateScheduleDialogArgs by navArgs()
+    private val args: CreateScheduleFragmentArgs by navArgs()
 
     private val createViewModel: CreateScheduleViewModel by viewModels {
         CreateScheduleViewModelFactory(args.scheduleId)
@@ -59,7 +39,6 @@ class CreateScheduleDialog : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d("SCH_ID", "createDialog: ${createViewModel.scheduleId}")
         _binding = CreateScheduleDialogBinding.inflate(inflater, container, false)
         binding.apply {
             createViewModel.days = listOf(
@@ -121,7 +100,6 @@ class CreateScheduleDialog : Fragment() {
         }
 
         makeSelected(createViewModel.currentDay)
-        Log.d(TAG, "onViewCreated works")
     }
 
     override fun onDestroyView() {
@@ -244,7 +222,11 @@ class CreateScheduleDialog : Fragment() {
     private suspend fun endDialog() {
         createViewModel.scheduleForDay?.let { createViewModel.scheduleRepository.addScheduleForDay(it) }
         createViewModel.scheduleRepository.addScheduleForDay(ScheduleForDay(UUID.randomUUID(), 1, createViewModel.scheduleId))
-        findNavController().navigate(CreateScheduleDialogDirections.actionCreateToSchedule(createViewModel.scheduleId))
+        findNavController().navigate(
+            CreateScheduleFragmentDirections.actionCreateToSchedule(
+                createViewModel.scheduleId
+            )
+        )
     }
 
     private fun getSpinnerAdapter(data: List<String>): ArrayAdapter<String>? {

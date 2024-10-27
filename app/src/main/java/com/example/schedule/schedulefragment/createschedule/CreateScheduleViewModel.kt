@@ -1,21 +1,13 @@
-package com.example.schedule.schedulefragment
+package com.example.schedule.schedulefragment.createschedule
 
 import android.widget.TextView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.example.schedule.model.Lesson
 import com.example.schedule.model.ScheduleForDay
 import com.example.schedule.model.Subject
 import com.example.schedule.repositories.ScheduleRepository
-import com.example.schedule.repositories.SubjectsRepository
 import com.google.android.material.card.MaterialCardView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import java.util.UUID
 
 class CreateScheduleViewModel(val scheduleId: UUID) : ViewModel() {

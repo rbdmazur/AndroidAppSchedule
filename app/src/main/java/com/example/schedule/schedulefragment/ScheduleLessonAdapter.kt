@@ -6,10 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.schedule.R
 import com.example.schedule.databinding.LessonScheduleCardBinding
-import com.example.schedule.model.Lesson
 import com.example.schedule.model.LessonAndSubject
-import com.example.schedule.model.ScheduleForDay
-import com.example.schedule.model.Subject
 
 class ScheduleLessonHolder(
     private val binding: LessonScheduleCardBinding,

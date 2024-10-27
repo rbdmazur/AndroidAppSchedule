@@ -2,7 +2,6 @@ package com.example.schedule.schedulefragment
 
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,11 +15,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.schedule.R
 import com.example.schedule.databinding.FragmentScheduleBinding
-import com.example.schedule.model.ScheduleForDay
 import kotlinx.coroutines.launch
 import java.util.Date
 
-private const val TAG = "VIEWMODEL"
 class ScheduleFragment : Fragment() {
 
     private var _binding: FragmentScheduleBinding? = null
@@ -29,9 +26,8 @@ class ScheduleFragment : Fragment() {
 
     private val args: ScheduleFragmentArgs by navArgs()
 
-    private val viewModel: ScheduleViewModel by viewModels {
-        ScheduleViewModelFactory(args.scheduleId)
-    }
+    private val viewModel: ScheduleViewModel by viewModels()
+
     val cal = Calendar.getInstance()
 
 
@@ -55,7 +51,6 @@ class ScheduleFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 if (args.scheduleId == null) {
-                    Log.d("SCH_ID", "randomFirst: ${args.scheduleId}")
                     binding.scheduleRecyclerView.adapter = ScheduleAddAdapter(showDialog)
                 } else {
                     val scheduleForDay = viewModel.scheduleRepository.getScheduleForDayOfWeek(
@@ -96,12 +91,6 @@ class ScheduleFragment : Fragment() {
             10 -> getString(R.string.november)
             else -> getString(R.string.december)
         }
-    }
-
-    private fun getScheduleForDay(dayOfWeek: Int, list: List<ScheduleForDay>): ScheduleForDay {
-        return list.stream().filter { p ->
-            p.dayOfWeek == dayOfWeek
-        }.findFirst().get()
     }
 
     private val showDialog: () -> Unit = {

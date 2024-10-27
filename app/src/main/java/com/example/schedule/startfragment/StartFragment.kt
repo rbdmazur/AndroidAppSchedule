@@ -7,11 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.schedule.R
 import com.example.schedule.databinding.FragmentStartBinding
 import com.example.schedule.repositories.ScheduleRepository
-import com.example.schedule.repositories.SubjectsRepository
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 
 

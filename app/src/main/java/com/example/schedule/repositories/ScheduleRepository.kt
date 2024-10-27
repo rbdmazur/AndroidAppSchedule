@@ -2,7 +2,6 @@ package com.example.schedule.repositories
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.example.schedule.database.ScheduleDatabase
 import com.example.schedule.model.Lesson
 import com.example.schedule.model.LessonAndSubject
@@ -10,11 +9,8 @@ import com.example.schedule.model.Schedule
 import com.example.schedule.model.ScheduleForDay
 import com.example.schedule.model.Subject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.util.UUID
-import kotlin.coroutines.coroutineContext
 
 private const val DATABASE_NAME = "schedule-database"
 

@@ -57,7 +57,7 @@
     </fragment>
     <dialog
         android:id="@+id/initScheduleDialog"
-        android:name="com.example.schedule.schedulefragment.InitScheduleDialog"
+        android:name="com.example.schedule.schedulefragment.createschedule.InitScheduleDialog"
         android:label="InitScheduleDialog" >
         <action
             android:id="@+id/action_init_to_create"
@@ -65,7 +65,7 @@
     </dialog>
     <fragment
         android:id="@+id/createScheduleDialog"
-        android:name="com.example.schedule.schedulefragment.CreateScheduleDialog"
+        android:name="com.example.schedule.schedulefragment.createschedule.CreateScheduleFragment"
         android:label="CreateScheduleDialog" >
         <action
             android:id="@+id/action_create_to_schedule"
@@ -76,6 +76,6 @@
     </fragment>
     <dialog
         android:id="@+id/addSubjectsDialog"
-        android:name="com.example.schedule.schedulefragment.AddSubjectsDialog"
+        android:name="com.example.schedule.schedulefragment.createschedule.AddSubjectsDialog"
         android:label="AddSubjectsDialog" />
 </navigation>

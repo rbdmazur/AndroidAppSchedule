@@ -52,11 +52,11 @@ dependencies {
     val nav_version = "2.8.1"
 
     // Jetpack Compose integration
-    implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation(libs.androidx.navigation.compose)
 
     // Views/Fragments integration
-    implementation("androidx.navigation:navigation-fragment:$nav_version")
-    implementation("androidx.navigation:navigation-ui:$nav_version")
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
 
     //coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
