@@ -24,8 +24,6 @@ class CreateScheduleViewModel(val scheduleId: UUID) : ViewModel() {
     )
     var currentTimes = times
 
-    val scheduleRepository = ScheduleRepository.get()
-
     var lastTime = 0
     var lessonsCounter = 0
     //day in daysView arrays

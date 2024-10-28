@@ -47,10 +47,6 @@
         <action
             android:id="@+id/action_schedule_to_init"
             app:destination="@id/initScheduleDialog" />
-        <argument
-            android:name="scheduleId"
-            app:argType="java.util.UUID"
-            app:nullable="true" />
         <action
             android:id="@+id/action_scheduleToAddSubjects"
             app:destination="@id/addSubjectsDialog" />

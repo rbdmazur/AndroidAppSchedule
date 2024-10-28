@@ -54,9 +54,7 @@ class InitScheduleDialog : DialogFragment() {
                 }
 
                 findNavController().navigate(
-                    InitScheduleDialogDirections.actionInitToCreate(
-                        schedule.id
-                    )
+                    InitScheduleDialogDirections.actionInitToCreate(schedule.id)
                 )
             }
         }

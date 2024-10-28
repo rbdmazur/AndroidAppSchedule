@@ -16,11 +16,15 @@ import com.example.schedule.databinding.CreateScheduleDialogBinding
 import com.example.schedule.model.Lesson
 import com.example.schedule.model.ScheduleForDay
 import com.example.schedule.model.Subject
+import com.example.schedule.repositories.ScheduleRepository
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 class CreateScheduleFragment : Fragment() {
 
+
+    private val scheduleRepository = ScheduleRepository.get()
     private val args: CreateScheduleFragmentArgs by navArgs()
 
     private val createViewModel: CreateScheduleViewModel by viewModels {
@@ -30,9 +34,6 @@ class CreateScheduleFragment : Fragment() {
     private var _binding: CreateScheduleDialogBinding? = null
     private val binding: CreateScheduleDialogBinding
         get() = checkNotNull(_binding)
-
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,7 +73,7 @@ class CreateScheduleFragment : Fragment() {
             lessonCounterText.text = res.getString(R.string.lesson_counter, createViewModel.lessonsCounter)
             timeSpinner.adapter = getSpinnerAdapter(createViewModel.times)
             viewLifecycleOwner.lifecycleScope.launch {
-                subjectsSpinner.adapter = getSpinnerAdapterFromSubjects(createViewModel.scheduleRepository.getSubjects())
+                subjectsSpinner.adapter = getSpinnerAdapterFromSubjects(scheduleRepository.getSubjects())
             }
             typeSpinner.adapter = getSpinnerAdapter(createViewModel.types)
 
@@ -163,10 +164,10 @@ class CreateScheduleFragment : Fragment() {
     }
 
     private suspend fun nextDay() {
-        createViewModel.scheduleForDay?.let { createViewModel.scheduleRepository.addScheduleForDay(it) }
+        createViewModel.scheduleForDay?.let { scheduleRepository.addScheduleForDay(it) }
         if (createViewModel.lessons.isNotEmpty()) {
             createViewModel.lessons.forEach {
-                createViewModel.scheduleRepository.addLesson(it)
+                scheduleRepository.addLesson(it)
             }
         }
 
@@ -186,7 +187,6 @@ class CreateScheduleFragment : Fragment() {
         binding.apply {
             lessonCounterText.text = resources.getString(R.string.lesson_counter, createViewModel.lessonsCounter)
             auditoriumTextField.text.clear()
-            subjectsSpinner.setSelection(0)
             timeSpinner.adapter = timeAdapter
             typeSpinner.setSelection(0)
 
@@ -220,12 +220,10 @@ class CreateScheduleFragment : Fragment() {
     }
 
     private suspend fun endDialog() {
-        createViewModel.scheduleForDay?.let { createViewModel.scheduleRepository.addScheduleForDay(it) }
-        createViewModel.scheduleRepository.addScheduleForDay(ScheduleForDay(UUID.randomUUID(), 1, createViewModel.scheduleId))
+        createViewModel.scheduleForDay?.let { scheduleRepository.addScheduleForDay(it) }
+        scheduleRepository.addScheduleForDay(ScheduleForDay(UUID.randomUUID(), 1, createViewModel.scheduleId))
         findNavController().navigate(
-            CreateScheduleFragmentDirections.actionCreateToSchedule(
-                createViewModel.scheduleId
-            )
+            CreateScheduleFragmentDirections.actionCreateToSchedule()
         )
     }
 
@@ -236,4 +234,5 @@ class CreateScheduleFragment : Fragment() {
     private fun getSpinnerAdapterFromSubjects(data: List<Subject>): ArrayAdapter<Subject>? {
         return this.context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_dropdown_item, data) }
     }
+
 }
