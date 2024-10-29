@@ -17,7 +17,6 @@ import com.example.schedule.model.Lesson
 import com.example.schedule.model.ScheduleForDay
 import com.example.schedule.model.Subject
 import com.example.schedule.repositories.ScheduleRepository
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.UUID
 
