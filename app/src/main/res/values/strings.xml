@@ -73,4 +73,6 @@
     <string name="subjects_frag_title">Your subjects</string>
     <string name="subjects_reminders">Your reminders</string>
     <string name="subjects_add_reminder_button">Add reminder</string>
+
+    <string name="profile_schedules">Your schedules</string>
 </resources>
