@@ -15,4 +15,8 @@
     <style name="ButtonStyle" parent="TextAppearance.AppCompat.Button">
         <item name="android:textSize">20sp</item>
     </style>
+
+    <style name="ItemActiveIndicatorStyle" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/coal_alpha</item>
+    </style>
 </resources>
