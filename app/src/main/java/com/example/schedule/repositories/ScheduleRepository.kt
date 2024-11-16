@@ -47,6 +47,7 @@ class ScheduleRepository private constructor(context: Context) {
         database.getScheduleForDayDao().getLessonsAndSubjects(scheduleForDay)
     }
 
+    //Schedule
     suspend fun getScheduleForWeek(scheduleId: UUID): List<ScheduleForDay> = withContext(Dispatchers.IO) {
         database.getScheduleDao().getSchedulesForDays(scheduleId)
     }
@@ -59,6 +60,10 @@ class ScheduleRepository private constructor(context: Context) {
 
     suspend fun getScheduleForDayOfWeek(scheduleId: UUID, dayOfWeek: Int): ScheduleForDay = withContext(Dispatchers.IO) {
         database.getScheduleDao().getScheduleForDayOfWeek(scheduleId, dayOfWeek)
+    }
+
+    suspend fun deleteSchedule(schedule: Schedule) = withContext(Dispatchers.IO) {
+        database.getScheduleDao().deleteSchedule(schedule)
     }
 
     companion object {

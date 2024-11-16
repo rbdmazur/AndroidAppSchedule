@@ -49,6 +49,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.auth)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     val nav_version = "2.8.1"
 
     // Jetpack Compose integration
@@ -59,14 +61,14 @@ dependencies {
     implementation(libs.androidx.navigation.ui)
 
     //coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     //database
-    implementation("androidx.room:room-ktx:2.6.1")
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

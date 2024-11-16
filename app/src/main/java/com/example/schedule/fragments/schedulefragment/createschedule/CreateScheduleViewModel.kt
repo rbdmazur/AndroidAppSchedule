@@ -1,4 +1,4 @@
-package com.example.schedule.schedulefragment.createschedule
+package com.example.schedule.fragments.schedulefragment.createschedule
 
 import android.widget.TextView
 import androidx.lifecycle.ViewModel

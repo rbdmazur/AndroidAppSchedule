@@ -1,8 +1,10 @@
-package com.example.schedule.schedulefragment
+package com.example.schedule.fragments.schedulefragment
 
 import android.icu.util.Calendar
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.schedule.repositories.ScheduleRepository
 import com.example.schedule.repositories.SubjectsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,19 +20,18 @@ class ScheduleViewModel : ViewModel() {
     val dates: List<Date> = initDates()
     val scheduleRepository = ScheduleRepository.get()
     val subjectsRepository = SubjectsRepository.get()
+
+    private val TAG = "ScheduleFragment"
+
     private val _scheduleId: MutableStateFlow<UUID?> = MutableStateFlow(null)
     val scheduleId: StateFlow<UUID?> = _scheduleId.asStateFlow()
+    private var _checkedScheduleIndex = 0
+    val checkedScheduleIndex = _checkedScheduleIndex
+
+
 
     init {
-        viewModelScope.launch {
-            val schedules = scheduleRepository.getSchedules()
-            if (schedules.isNotEmpty()) {
-                _scheduleId.value = schedules[0].id
-            }
-            else {
-                _scheduleId.value = null
-            }
-        }
+        updateScheduleId()
     }
 
     private fun initDates(): List<Date> {
@@ -42,5 +43,22 @@ class ScheduleViewModel : ViewModel() {
             calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
         return list
+    }
+
+    fun updateScheduleId(id: UUID, index: Int) {
+        _scheduleId.value = id
+        _checkedScheduleIndex = index
+    }
+
+    fun updateScheduleId() {
+        viewModelScope.launch {
+            val schedules = scheduleRepository.getSchedules()
+            if (schedules.isNotEmpty()) {
+                _scheduleId.value = schedules[checkedScheduleIndex].id
+            }
+            else {
+                _scheduleId.value = null
+            }
+        }
     }
 }

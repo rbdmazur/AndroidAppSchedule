@@ -1,4 +1,4 @@
-package com.example.schedule.schedulefragment.createschedule
+package com.example.schedule.fragments.schedulefragment.createschedule
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -221,9 +221,7 @@ class CreateScheduleFragment : Fragment() {
     private suspend fun endDialog() {
         createViewModel.scheduleForDay?.let { scheduleRepository.addScheduleForDay(it) }
         scheduleRepository.addScheduleForDay(ScheduleForDay(UUID.randomUUID(), 1, createViewModel.scheduleId))
-        findNavController().navigate(
-            CreateScheduleFragmentDirections.actionCreateToSchedule()
-        )
+        findNavController().navigateUp()
     }
 
     private fun getSpinnerAdapter(data: List<String>): ArrayAdapter<String>? {

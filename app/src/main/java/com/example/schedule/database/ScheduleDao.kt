@@ -1,6 +1,7 @@
 package com.example.schedule.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.schedule.model.Schedule
@@ -21,4 +22,7 @@ interface ScheduleDao {
 
     @Insert
     suspend fun addSchedule(schedule: Schedule)
+
+    @Delete
+    suspend fun deleteSchedule(schedule: Schedule)
 }

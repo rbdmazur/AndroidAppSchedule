@@ -1,4 +1,4 @@
-package com.example.schedule.subjectsfragment
+package com.example.schedule.fragments.subjectsfragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

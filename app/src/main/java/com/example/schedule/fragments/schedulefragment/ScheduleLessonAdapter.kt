@@ -1,8 +1,10 @@
-package com.example.schedule.schedulefragment
+package com.example.schedule.fragments.schedulefragment
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.schedule.R
 import com.example.schedule.databinding.LessonScheduleCardBinding
@@ -41,19 +43,37 @@ class ScheduleLessonHolder(
     }
 }
 
-class ScheduleLessonAdapter(
-    private val lessons: List<LessonAndSubject>
-) : RecyclerView.Adapter<ScheduleLessonHolder>() {
+class ScheduleLessonAdapter : RecyclerView.Adapter<ScheduleLessonHolder>() {
+
+    private val diffCallback = object : DiffUtil.ItemCallback<LessonAndSubject>() {
+        override fun areItemsTheSame(
+            oldItem: LessonAndSubject,
+            newItem: LessonAndSubject
+        ): Boolean {
+            return oldItem.lesson.id == newItem.lesson.id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: LessonAndSubject,
+            newItem: LessonAndSubject
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val lessons = AsyncListDiffer(this, diffCallback)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleLessonHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = LessonScheduleCardBinding.inflate(inflater, parent, false)
         return ScheduleLessonHolder(binding, parent.context)
     }
 
-    override fun getItemCount(): Int = lessons.size
+    override fun getItemCount(): Int = lessons.currentList.size
 
     override fun onBindViewHolder(holder: ScheduleLessonHolder, position: Int) {
-        val lesson = lessons[position]
+        val lesson = lessons.currentList[position]
         holder.bind(lesson)
     }
+
 }

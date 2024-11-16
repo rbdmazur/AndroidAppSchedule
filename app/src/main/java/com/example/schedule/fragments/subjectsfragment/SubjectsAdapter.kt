@@ -1,4 +1,4 @@
-package com.example.schedule.subjectsfragment
+package com.example.schedule.fragments.subjectsfragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

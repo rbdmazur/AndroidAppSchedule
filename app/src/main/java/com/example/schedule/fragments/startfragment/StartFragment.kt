@@ -1,4 +1,4 @@
-package com.example.schedule.startfragment
+package com.example.schedule.fragments.startfragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -16,7 +16,6 @@ class StartFragment : Fragment() {
     private var _binding: FragmentStartBinding? = null
     private val binding: FragmentStartBinding
         get() = checkNotNull(_binding)
-    private val scheduleRepository = ScheduleRepository.get()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

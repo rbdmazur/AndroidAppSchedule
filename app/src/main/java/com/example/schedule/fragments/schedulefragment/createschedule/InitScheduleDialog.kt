@@ -1,4 +1,4 @@
-package com.example.schedule.schedulefragment.createschedule
+package com.example.schedule.fragments.schedulefragment.createschedule
 
 import android.os.Bundle
 import android.util.Log
@@ -54,7 +54,9 @@ class InitScheduleDialog : DialogFragment() {
                 }
 
                 findNavController().navigate(
-                    InitScheduleDialogDirections.actionInitToCreate(schedule.id)
+                    InitScheduleDialogDirections.actionInitToCreate(
+                        schedule.id
+                    )
                 )
             }
         }

@@ -4,16 +4,43 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/schedule_title_text_view"
         style="@style/TextNormal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/is_checked_image_view"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="INF_CTS_2024" />
+
+    <ImageView
+        android:id="@+id/is_checked_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_check_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/add_schedule_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="INF_CTS_2024" />
+        app:srcCompat="@drawable/baseline_add_24"
+        android:visibility="invisible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

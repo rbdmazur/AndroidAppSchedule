@@ -79,4 +79,6 @@
     <string name="nav_menu_schedule">Schedule</string>
     <string name="nav_menu_subjects">Subjects</string>
     <string name="nav_menu_profile">Profile</string>
+
+    <string name="schedule_fragment_empty_list">There is no schedule.\nAdd new schedule in "Profile".</string>
 </resources>
