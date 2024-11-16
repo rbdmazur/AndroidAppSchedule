@@ -1,10 +1,9 @@
-package com.example.schedule.fragments.schedulefragment
+package com.example.schedule
 
 import android.icu.util.Calendar
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.schedule.repositories.ScheduleRepository
 import com.example.schedule.repositories.SubjectsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,13 +24,13 @@ class ScheduleViewModel : ViewModel() {
 
     private val _scheduleId: MutableStateFlow<UUID?> = MutableStateFlow(null)
     val scheduleId: StateFlow<UUID?> = _scheduleId.asStateFlow()
-    private var _checkedScheduleIndex = 0
-    val checkedScheduleIndex = _checkedScheduleIndex
+    var checkedScheduleIndex = 0
 
 
 
     init {
         updateScheduleId()
+        Log.d("ViewModelChange", "updateScheduleId() in init")
     }
 
     private fun initDates(): List<Date> {
@@ -47,10 +46,11 @@ class ScheduleViewModel : ViewModel() {
 
     fun updateScheduleId(id: UUID, index: Int) {
         _scheduleId.value = id
-        _checkedScheduleIndex = index
+        checkedScheduleIndex = index
     }
 
     fun updateScheduleId() {
+        Log.d("ViewModelChange", "updateScheduleId(), currentPos: $checkedScheduleIndex")
         viewModelScope.launch {
             val schedules = scheduleRepository.getSchedules()
             if (schedules.isNotEmpty()) {

@@ -7,19 +7,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.runtime.currentCompositionErrors
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.schedule.MainActivity
 import com.example.schedule.R
+import com.example.schedule.ScheduleViewModel
 import com.example.schedule.databinding.FragmentScheduleBinding
 import com.example.schedule.model.ScheduleForDay
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
@@ -31,9 +28,8 @@ class ScheduleFragment : Fragment() {
     get() = checkNotNull(_binding)
     private var currentScheduleId: UUID? = null
 
-    private val TAG = "ScheduleFragment"
 
-    private val viewModel: ScheduleViewModel by viewModels()
+    lateinit var viewModel: ScheduleViewModel
 
     val cal = Calendar.getInstance()
 
@@ -41,18 +37,17 @@ class ScheduleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = (activity as MainActivity).viewModel
         _binding = FragmentScheduleBinding.inflate(inflater, container, false)
         binding.calendarRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.scheduleRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        Log.d(TAG, "onCreateView: ${viewModel.scheduleId.value}")
         observe()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         cal.time = viewModel.run { dates[selectedDayId] }
         binding.monthYearTextView.text = monthParser(cal.get(Calendar.MONTH))
         binding.calendarRecyclerView.adapter = CalendarAdapter(viewModel.dates, viewModel.selectedDayId, updateUiAfterChangeDate)
@@ -76,13 +71,11 @@ class ScheduleFragment : Fragment() {
                 }
             }
         }
-        Log.d(TAG, "onViewCreated")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        Log.d(TAG, "onDestroyView")
     }
 
     private fun monthParser(month: Int): String {
@@ -119,6 +112,7 @@ class ScheduleFragment : Fragment() {
 
     private suspend fun setupScheduleLessonAdapter(scheduleForDay: ScheduleForDay) {
         val adapter = ScheduleLessonAdapter()
+        val list =  viewModel.scheduleRepository.getLessonsWithSubjects(scheduleForDay.id)
         adapter.lessons.submitList(
             viewModel.scheduleRepository.getLessonsWithSubjects(scheduleForDay.id)
         )

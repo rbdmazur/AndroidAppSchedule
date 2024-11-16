@@ -1,6 +1,7 @@
 package com.example.schedule.fragments.schedulefragment.createschedule
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -163,12 +164,7 @@ class CreateScheduleFragment : Fragment() {
     }
 
     private suspend fun nextDay() {
-        createViewModel.scheduleForDay?.let { scheduleRepository.addScheduleForDay(it) }
-        if (createViewModel.lessons.isNotEmpty()) {
-            createViewModel.lessons.forEach {
-                scheduleRepository.addLesson(it)
-            }
-        }
+        addSchedule()
 
         createViewModel.currentDay++
         createViewModel.currentDayOfWeek++
@@ -218,8 +214,18 @@ class CreateScheduleFragment : Fragment() {
         }
     }
 
-    private suspend fun endDialog() {
+    //Adding schedule for a day in database
+    private suspend fun addSchedule() {
         createViewModel.scheduleForDay?.let { scheduleRepository.addScheduleForDay(it) }
+        if (createViewModel.lessons.isNotEmpty()) {
+            createViewModel.lessons.forEach {
+                scheduleRepository.addLesson(it)
+            }
+        }
+    }
+
+    private suspend fun endDialog() {
+        addSchedule()
         scheduleRepository.addScheduleForDay(ScheduleForDay(UUID.randomUUID(), 1, createViewModel.scheduleId))
         findNavController().navigateUp()
     }

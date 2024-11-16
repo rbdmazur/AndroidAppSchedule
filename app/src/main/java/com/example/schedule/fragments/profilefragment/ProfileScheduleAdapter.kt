@@ -11,7 +11,8 @@ import com.example.schedule.model.Schedule
 
 class ProfileScheduleAdapter(
     private val checkedScheduleIndex: Int,
-    private val addScheduleListener: () -> Unit
+    private val addScheduleListener: () -> Unit,
+    private val changeSchedule: (Int) -> Unit
 ) : RecyclerView.Adapter<ProfileScheduleAdapter.ScheduleViewHolder>() {
 
 
@@ -19,13 +20,30 @@ class ProfileScheduleAdapter(
         private val binding: ScheduleTitleItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(schedule: Schedule, isChecked: Boolean) {
-            binding.scheduleTitleTextView.text = schedule.title
-            if (isChecked) {
-                binding.isCheckedImageView.visibility = View.VISIBLE
-            } else {
-                binding.isCheckedImageView.visibility = View.INVISIBLE
+        init {
+            binding.root.setOnClickListener {
+                selectedItemPos = adapterPosition
+                if (lastSelectedItemPos == -1) {
+                    lastSelectedItemPos = selectedItemPos
+                } else {
+                    notifyItemChanged(lastSelectedItemPos)
+                    lastSelectedItemPos = selectedItemPos
+                }
+                notifyItemChanged(selectedItemPos)
             }
+        }
+
+        fun bind(schedule: Schedule) {
+            binding.scheduleTitleTextView.text = schedule.title
+        }
+
+        fun makeSelected() {
+            binding.isCheckedImageView.visibility = View.VISIBLE
+            changeSchedule(selectedItemPos)
+        }
+
+        fun makeUnselected() {
+            binding.isCheckedImageView.visibility = View.INVISIBLE
         }
 
         fun makeAddView() {
@@ -40,6 +58,9 @@ class ProfileScheduleAdapter(
             }
         }
     }
+
+    private var selectedItemPos = checkedScheduleIndex
+    private var lastSelectedItemPos = selectedItemPos
 
     private val diffCallback = object : DiffUtil.ItemCallback<Schedule>() {
         override fun areItemsTheSame(oldItem: Schedule, newItem: Schedule): Boolean {
@@ -71,8 +92,12 @@ class ProfileScheduleAdapter(
     override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
         if (position < diffList.currentList.size) {
             val schedule = diffList.currentList[position]
-            val isChecked = checkedScheduleIndex == position
-            holder.bind(schedule, isChecked)
+            if (selectedItemPos == position) {
+                holder.makeSelected()
+            } else {
+                holder.makeUnselected()
+            }
+            holder.bind(schedule)
         } else {
             holder.makeAddView()
         }
